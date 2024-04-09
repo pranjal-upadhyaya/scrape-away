@@ -1,0 +1,183 @@
+/* CSS to style the tables */
+.styled-table table, th, td {
+    border: 1px solid black;
+    /* border-radius: 5px; */
+  }
+
+.styled-table th, td {
+	padding: 2px;
+	color: black;
+	text-wrap: wrap;
+}
+
+.styled-table th {
+	text-transform: capitalize;
+}
+
+.styled-table tr:nth-child(even) {
+	background-color: rgb(144, 228, 243);
+}
+
+/* CSS to style the collapsible elements */
+.collapsible {
+	background-color: #eee;
+	color: #333;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 15px;
+}
+.content {
+	display: none;
+	padding: 0 20px;
+	overflow: hidden;
+	background-color: #f1f1f1;
+	color: #333;
+}
+
+.content-set {
+	display: none;
+}
+
+/* CSS to style the side-by-side elements */
+.container {
+	display: flex; /* Use flexbox layout */
+}
+.element {
+	flex: 1; /* Each element takes equal space */
+	border: 1px solid #000;
+	padding-left: 10px; /* Add padding for content */
+	padding-right: 10px;
+}
+
+body {
+	background-color: #01031d;
+	color: #ffffff;
+}
+
+.table-background {
+	/* background-color:#4c047f; */
+	color: black;
+	overflow-y: scroll;
+}
+
+.left-container {
+    width: 300px; /* Adjust width as needed */
+    height: 800px;
+    background-color: #cecccc; /* Background color for the sidebar */
+	color: black;
+    /* overflow-y: auto;  */
+	/* Enable vertical scrollbar if content overflows */
+    float: left; /* Float the sidebar to the left */
+    border-right: 1px solid #ddd; /* Optional: Add border on the right side */
+}
+
+.scrollable-left-content {
+    padding-left: 10px; /* Add padding for content */
+	padding-right: 10px;
+}
+
+.right-container {
+    margin-left: 320px; /* Adjust the margin to account for the width of the sidebar */
+	height: 800px;
+}
+
+/* .right-content {
+	padding-left: 10px;
+	padding-right: 10px;
+} */
+
+.scrollable-content {
+	padding: 20px;
+	height: 600px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+	text-overflow: ellipsis;
+}
+
+.scrollable-right-content {
+	scrollbar-width: None;
+	padding-left: 10px;
+	padding-right: 10px;
+	height: 800px;
+	overflow-y: scroll;
+}
+
+.register-login-container {
+	position: relative;
+}
+
+.register-login-content {
+	position: absolute; /* Make the child element position absolute */
+    top: 50%; /* Align the top of the child element at 50% of the parent's height */
+    left: 50%; /* Align the left of the child element at 50% of the parent's width */
+    transform: translate(-50%, -50%); /* Move the element back by half of its own width and height */
+    background-color: rgb(66, 2, 105); /* Background color for visualization */
+    padding: 20px; /* Add padding for better appearance */
+	width: 300px;
+	/* height: 300px; */
+}
+
+.register-login-form {
+	background-color: #cecccc;
+	color: black;
+	padding: 10px;
+}
+
+.button-pop {
+	display: inline-block;
+	/* background-color: greenyellow;
+	color: white; */
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6), 0 12px 32px rgba(0, 0, 0, 0.4); /* Add box shadow on hover */
+}
+
+.overlay {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black overlay */
+    display: none; /* Hidden by default */
+}
+
+.open-dialog-button {
+	display: inline-block;
+	background-color: rgb(66, 6, 231);
+	color: white;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2); /* Add box shadow on hover */
+}
+
+.dialog-box {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+	width: 300px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #cecccc;
+    padding: 20px;
+	justify-content: flex-end;
+	align-items: center;
+    /* border: 1px solid #888; */
+}
+
+.close-button {
+	position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+li {
+	list-style-type: disc;
+}
+
+span {
+	margin-right: 10px;
+}

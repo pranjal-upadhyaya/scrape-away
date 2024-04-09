@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+<!-- {% block header %}
+<h2>
+    Type the url that needs to be scraped.
+</h2>
+{% endblock %} -->
+
+{% block content %}
+<div class="left-container">
+    <div class="scrollable-left-content">
+        <h1>Webscraper</h1>
+        <div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+            <h3>Welcom {{g.user["username"]}} !</h3>
+        </div>
+        <div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+            <h3>
+                <a href="{{url_for('auth.profile')}}">
+                    <span>
+                        Profile
+                    </span>
+                </a>
+            </h3>
+        </div>
+        <div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+            <h3>
+                <a href="{{url_for('auth.logout')}}">
+                    <span>
+                        Logout
+                    </span>
+                </a>
+            </h3>
+        </div>
+    </div>
+</div>
+<div class="right-container scrollable-right-content">
+    <section>
+        <main>
+            <ul>
+                <h2>
+                    Scrape Away
+                </h2>
+                <p>
+                    Type the url that needs to be scraped and click on the scrape button. The scraped page source will be displayed if the scraping is succefull. Data mining options are provided if the scraping is succesfull.
+                </p>
+                <form id="website" action="/home" method="post">
+                    <label for="website"><b> Website </b></label>
+                    <input name="website", id="website">
+                    <input type="submit", id="submit_key", name="submit_key" value="scrape">
+                </form>
+            </ul>
+            <ul>
+            {% if website %}
+                {% if raw_source_json %}
+                    <div>
+                        <div class="container">
+                            <button type="button" data-id="metadata" data-id-button-group="group1" class="element collapsible button-pop" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Metadata</b></button>
+                            <button type="button" data-id="pagesource" data-id-button-group="group1" class="element collapsible button-pop" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Page Source</b></button>
+                            <button type="button" data-id="miner" data-id-button-group="group1" class="element collapsible button-pop" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Miner</b></button>
+                        </div>
+                        <div style="padding: 10px;">
+                            <div id="metadata" data-id-set="scraped-data" class="content scrollable-content content-set">
+                                <table class="styled-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data Type</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for key in raw_source_json.keys() %}
+                                        {% if key not in ["response_data","soup","pretified_soup"] %}
+                                        <!-- <div class = "container">
+                                            <p class="element">{{key}}</p>
+                                            <p class="element">{{raw_source_json[key]}}</p>
+                                        </div> -->
+                                            <tr>
+                                                <td>{{key}}</td>
+                                                <td>{{raw_source_json[key]}}</td>
+                                            </tr>
+                                        <!-- <br> -->
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="pagesource" data-id-set="scraped-data" class="content scrollable-content content-set">
+                                <p> {{raw_source_json["response_data"]}} </p>
+                            </div>
+                            <div id="miner" data-id-set="scraped-data" class="content content-set">
+                                <div class="container" style="padding: 10px;">
+                                    <button type="button" data-id="iterative_data_miner" data-id-button-group="group2" class="element collapsible" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Iterative Miner</b></button>
+                                    <button type="button" data-id="procedural_data_miner" data-id-button-group="group2" class="element collapsible" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Procedural Miner</b></button>
+                                </div>
+                                <div style="padding: 10px;">
+                                    <div id="iterative_data_miner" data-id-set="miner" class="content content-set">
+                                        <form action="/iterative_data_miner" method="post">
+                                            <h4>The paramters below are used to extract the html code block list that is iterated over</h4>
+                                            <span><label for="key">key</label></span>
+                                            <span><input type="text"  id="key" name="key"></span>
+                                            <span><label for="tag">tag</label></span>
+                                            <span><input type="text" id="tag" name="tag"></span>
+                                            <span><label for="attribute">attribute</label></span>
+                                            <span><input type="text" id="attribute" name="attribute"></span>
+                                            <br>
+                                            <br>
+                                            <ul id="input-container-iterative" style="border: 1px solid black;">
+                                                <h4> The parameters below are used to extract the text and urls from the html code blocks in the html code block list</h4>
+                                                <br>
+                                                <li>
+                                                    <span><label for="key">key</label></span>
+                                                    <span><input type="text"  id="key" name="key[]"></span>
+                                                    <span><label for="tag">tag</label></span>
+                                                    <span><input type="text" id="tag" name="tag[]"></span>
+                                                    <span><label for="attribute">attribute</label></span>
+                                                    <span><input type="text" id="attribute" name="attribute[]"></span>
+                                                </li>
+                                                <br>
+                                            </ul>
+                                            <br>
+                                            <button type="button" onclick="addInputs('input-container-iterative')"><b> Add Row </b></button>
+                                            <button type="submit"><b> Submit </b></button>
+                                        </form>
+                                    </div>
+                                    <div id="procedural_data_miner" data-id-set="miner" class="content content-set">
+                                        <form action="/procedural_data_miner" method="post">
+                                            <ul id="input-container-procedural" style="border: 1px solid black;">
+                                                <h4> The parameters below are used to extract the text and urls from the page source</h4>
+                                                <br>
+                                                <li>
+                                                    <span><label for="key">key</label></span>
+                                                    <span><input type="text"  id="key" name="key[]"></span>
+                                                    <span><label for="tag">tag</label></span>
+                                                    <span><input type="text" id="tag" name="tag[]"></span>
+                                                    <span><label for="attribute">attribute</label></span>
+                                                    <span><input type="text" id="attribute" name="attribute[]"></span>
+                                                </li>
+                                                <br>
+                                            </ul>
+                                            <br>
+                                            <button type="button" onclick="addInputs('input-container-procedural')"><b>Add Row</b></button>
+                                            <button type="submit"><b>Submit</b></button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        {% if header_list %}
+                        <button data-id="mined-data" data-id-button-group="group3" type="button" class="collapsible" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Mined Data</b></button>
+                        <div style="padding: 10px;">
+                            <div id="mined-data" class="content table-background scrollable-content">
+                                <button type="button" data-id-dialog-box="save-config" class="open-dialog-button">Save Mining Configuration</button>
+                                <button type="button" data-id-dialog-box="save-data" class="open-dialog-button">Save Mined Data</button>
+                                <!-- <button type="button" class="button-save">Download Mined Data</button> -->
+                                <div class="overlay"></div>
+                                <div id="save-config" class="dialog-box">
+                                    <button type="button" onclick="closeDialog('save-config')" class="close-button">Close</button>
+                                    <h2>Save Configuration</h2>
+                                    <div class="message-container">
+                                        <p id="save-message" style="color: red; display: none;">
+                                            Message Test
+                                        </p>
+                                    </div>
+                                    <form class="save-form" action="/save_config" method="post">
+                                        <br>
+                                        <span><label for="config-name"><b>Configuration Name</b></label></span>
+                                        <br>
+                                        <span><input type="text" id="config-name" name="configName"></span>
+                                        <br>
+                                        <span><button type="submit">Save Configuration</button></span>
+                                        <br>
+                                    </form>
+                                </div>
+                                <div id="save-data" class="dialog-box">
+                                    <button type="button" onclick="closeDialog('save-data')" class="close-button">Close</button>
+                                    <h2>Save Data</h2>
+                                    <form method="post">
+                                        <br>
+                                        <span><label for="data-name"><b>Data Name</b></label></span>
+                                        <br>
+                                        <span><input type="text" id="data-name" name="dataName"></span>
+                                        <br>
+                                        <span><button type="submit">Save Data</button></span>
+                                        <br>
+                                    </form>
+                                </div>
+                                <!-- <br> -->
+                                <table class="styled-table">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2"></th>
+                                            {% for header in header_list %}
+                                                <th colspan="2">{{header}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            {% for header in header_list %}
+                                                <th>text</th>
+                                                <th>url</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    {% if mined_data %}
+                                        <tbody>
+                                            {% for key in mined_data.keys() %}
+                                                <tr>
+                                                    <th>{{key}}</th>
+                                                    {% for header in header_list %}
+                                                        <td>{{mined_data[key][header]["text"]}}</td>
+                                                        <td>{{mined_data[key][header]["url"]}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    {% else %}
+                                        <tbody>
+                                            <tr>
+                                                {% for header in header_list %}
+                                                    <td>None</td>
+                                                    <td>None</td>
+                                                {% endfor %}
+                                            </tr>
+                                        </tbody>
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <br>
+                    </div>
+                {% else %}
+                    <p>Could not scrape website</p>
+                {% endif %}
+            {% endif %}
+            </ul>
+        </main>
+    </section>
+</div>
+{% endblock %}

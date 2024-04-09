@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="left-container">
+	<div class="scrollable-left-content">
+		<h1>Webscraper</h1>
+		{% if g.user %}
+			<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+				<h3>Welcom {{g.user["username"]}} !</h3>
+			</div>
+			<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+				<h3>
+					<a href="{{url_for('webpage.home')}}">
+						<span>
+							Go to home page
+						</span>
+					</a>
+				</h3>
+			</div>
+		{% endif %}
+		<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+			<h3>
+				<a href="{{url_for('auth.change_password')}}">
+					<span>
+						Change password
+					</span>
+				</a>
+			</h3>
+		</div>
+		<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+			<h3>
+				<a href="{{url_for('auth.logout')}}">
+					<span>
+						Logout
+					</span>
+				</a>
+			</h3>
+		</div>
+	</div>
+</div>
+<div class="right-container register-login-container">
+	<div class="register-login-content">
+		<h2>
+			Profile
+		</h2>
+		<div class="register-login-form">
+			<div>
+				<label for="firstName"><h3>First Name</h3></label>
+				<p id="firstName">{{g.user_profile["first_name"]}}</p>
+				<label for="lastName"><h3>Last Name</h3></label>
+				<p id="lastName">{{g.user_profile["last_name"]}}</p>
+				<label for="emailId"><h3>Email</h3></label>
+				<p id="emailId">{{g.user_profile["email_id"]}}</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

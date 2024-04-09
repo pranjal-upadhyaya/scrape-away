@@ -1,0 +1,44 @@
+{% extends "pages/home.html" %}
+
+{% block table_content %}
+
+<div>
+    <table>
+        <thead>
+            <tr>
+                {% for header in header_list %}
+                    <th colspan="2">{{header}}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for header in header_list %}
+                    <th>text</th>
+                    <th>url</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% if g.mined_data %}
+            <tbody>
+                {% for key in mined_data.keys() %}
+                    <tr>
+                        {% for header in g.header_list %}
+                            <td>{{mined_data[key][header]["text"]}}</td>
+                            <td>{{mined_data[key][header]["url"]}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        {% else %}
+            <tbody>
+                <tr>
+                    {% for header in g.header_list %}
+                        <td>None</td>
+                        <td>None</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        {% endif %}
+    </table>
+</div>
+
+{% endblock %}

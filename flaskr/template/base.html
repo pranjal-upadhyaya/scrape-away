@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+	<title> Webscraper </title>
+</head>
+<body>
+{% block content %}
+	<h1> Webscraper </h1>
+	<section>
+		<header>
+			<!-- {% block header %}{% endblock %} -->
+		</header>
+		<main>
+			<nav>
+			<ul>
+				<li>
+					Check the home page 
+					<a href="{{ url_for('webpage.home') }}">
+						Home
+					</a>
+				</li>
+				<li>
+					Check the about page 
+					<a href="{{ url_for('webpage.about') }}">
+						About
+					</a>
+				</li>
+			</ul>
+			</nav>
+		<main>
+	</section>
+{% endblock %}
+<script>
+	var form = document.getElementsByClassName('save-form')
+
+	for (var i = 0; i < form.length; i++) {
+		form[i].addEventListener('submit', function(event) {
+			event.preventDefault(); // Prevent default form submission
+			
+			var actionTarget = this.getAttribute("action")
+			// console.log(actionTarget)
+
+
+			// Fetch the form data
+			var formData = new FormData(this);
+			
+			// Send the form data to the server using fetch API
+			fetch(actionTarget, {
+				method: 'POST',
+				body: formData
+			})
+			.then(response => response.json())
+			.then(data => {
+				// Hide the form
+				var statusCode = data.status_code
+
+				var messageId = data.message_id
+
+				var message = data.message
+
+				document.getElementById(messageId).innerText = message;
+				// console.log(document.getElementById(messageId))
+
+				document.getElementById(messageId).style.display = 'block'
+
+				if (statusCode === 200) {
+					this.querySelectorAll('input, textarea').forEach(function(field) {
+						field.value = ''; // Set the value to an empty string
+					});
+				}
+				
+			})
+			.catch(error => console.error('error:', error));
+		});
+	}
+</script>
+<script>
+	var dial = document.getElementsByClassName("open-dialog-button")
+
+	for (var i = 0; i < dial.length; i++) {
+		dial[i].addEventListener("click", function() {
+			var dialogId = this.getAttribute("data-id-dialog-box");
+
+			var dialogBox = document.getElementById(dialogId);
+
+			document.querySelector('.overlay').style.display = "block";
+			dialogBox.style.display = "block";
+		})
+	};
+
+	function closeDialog(dialogId) {
+		var dialogBox = document.getElementById(dialogId);
+
+		var messageElements = document.querySelectorAll('save-message')
+		// console.log(messageElements)
+
+		for (var messageElement of messageElements) {
+			// console.log(messageElement)
+			messageElement.innerText = ""
+			// console.log(messageElement) 
+		}
+
+		var saveForms = document.getElementsByClassName('save-form')
+		// console.log(saveForms)
+
+		for (var form of saveForms) {
+			// console.log(form)
+			form.querySelectorAll('input, textarea').forEach(function(field) {
+						field.value = ''; // Set the value to an empty string
+			});
+		}
+
+		document.querySelector('.overlay').style.display = "none";
+		dialogBox.style.display = "none";
+
+	}
+</script>
+<script>
+	// JavaScript to toggle visibility of content when button is clicked
+	var coll = document.getElementsByClassName("collapsible");
+	// console.log(coll)
+	var i;
+	
+	for (i = 0; i < coll.length; i++) {
+		coll[i].addEventListener("click", function() {
+			this.classList.toggle("active");
+
+			if (this.getAttribute("data-id-button-group")) {
+				var buttonGroupId = this.getAttribute("data-id-button-group")
+				var selector = '[data-id-button-group="' + buttonGroupId + '"]'
+				var sisterElements = document.querySelectorAll(selector);
+				for (var element of sisterElements) {
+						element.style.backgroundColor = "#eee";
+						element.style.color = '#333';
+					};
+			}
+
+			var idValue = this.getAttribute("data-id");
+			if (idValue !== null){
+				var content = document.getElementById(idValue);
+			}
+			else {
+				var content = this.nextElementSibling;
+			}
+			if (content.style.display === "block") {
+				content.style.display = "none";
+			} else {
+				// console.log(content.classList)
+				// console.log(content.classList.contains("content-set"))
+				if (content.classList.contains("content-set")) {
+					var idSetValue = content.getAttribute("data-id-set");
+					var selector = '[data-id-set="' + idSetValue + '"]'
+					var sisterElements = document.querySelectorAll(selector);
+					for (var element of sisterElements) {
+						element.style.display = "none"
+					};
+				}
+				content.style.display = "block";
+				this.style.backgroundColor = "greenyellow";
+				this.style.color = "white";
+			}
+		});
+	}
+</script>
+<script>
+	function addInputs(id) {
+		var container = document.getElementById(id);
+		var subContainer = document.createElement("li")
+		var linebreaker = document.createElement("br")
+		var inputs = ["key", "tag", "attribute"]; // Define the set of inputs
+		var deleteButton = document.createElement("button")
+		deleteButton.type = "button"
+		deleteButton.innerHTML = "Delete"
+		deleteButton.onclick = function(event) {
+			var parent = this.parentElement.parentElement;
+			var sibling = parent.nextElementSibling
+			parent.remove();
+			sibling.remove();
+		}
+		var buttonSpan = document.createElement("span")
+		buttonSpan.appendChild(deleteButton)
+
+		for (var i = 0; i < inputs.length; i++) {
+			var labelSpan = document.createElement("span");
+			var label = document.createElement("label");
+			label.for = inputs[i];
+			label.innerHTML = inputs[i]
+			labelSpan.appendChild(label)
+
+			var inputSpan = document.createElement("span");
+			var newInput = document.createElement("input");
+			newInput.type = "text";
+			newInput.id = inputs[i];
+			newInput.name = inputs[i] + "[]"; // Use array notation for form submission
+			label.setAttribute("for", inputs[i])
+			inputSpan.appendChild(newInput)
+
+
+			subContainer.appendChild(labelSpan);
+			subContainer.appendChild(inputSpan);
+		}
+		subContainer.appendChild(buttonSpan)
+		container.appendChild(subContainer)
+		container.appendChild(linebreaker)
+	}
+</script>
+</body>
+</html>

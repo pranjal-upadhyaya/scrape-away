@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="left-container">
+	<div class="scrollable-left-content">
+		<h1>Webscraper</h1>
+		<!-- {% if g.user %}
+			<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+				<h3>Welcom {{g.user["username"]}} !</h3>
+			</div>
+			<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+				<h3>
+					<a href="{{url_for('webpage.home')}}">
+						<span>
+							Go to home page
+						</span>
+					</a>
+				</h3>
+			</div>
+		{% endif %} -->
+		<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+			<h3>
+				<a href="{{url_for('auth.register')}}">
+					<span>
+						Register
+					</span>
+				</a>
+			</h3>
+		</div>
+		<div style="background-color: rgb(160, 161, 162); border-radius: 5px; padding-left: 10px;">
+			<h3>
+				<a href="{{url_for('auth.login')}}">
+					<span>
+						Login
+					</span>
+				</a>
+			</h3>
+		</div>
+	</div>
+</div>
+<div class="right-container register-login-container">
+	<div class="register-login-content">
+		<h2>
+			Register
+		</h2>
+		<div class="register-login-form">
+			<form method="post">
+				<label for="firstName"><h3>First Name</h3></label>
+				<input name="firstName" id="firstName" required>
+				<br>
+				<label for="lastName"><h3>Last Name</h3></label>
+				<input name="lastName" id="lastName">
+				<br>
+				<label for="emailId"><h3>Email</h3></label>
+				<input name="emailId" id="emailId" required>
+				<br>
+				<label for="username"><h3>Username</h3></label>
+				<input name="username" id="username" required>
+				<br>
+				<label for="password"><h3>Password</h3></label>
+				<input type="password" name="password" id="password" required>
+				<br>
+				<br>
+				<input type="submit" value="Register">
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
