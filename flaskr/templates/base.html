@@ -34,6 +34,70 @@
 	</section>
 {% endblock %}
 <script>
+	var info = document.getElementsByClassName('saved-info')
+
+	for (var i = 0; i < info.length; i++) {
+		info[i].addEventListener('click', function() {
+			var id = this.getAttribute('data-id')
+			var saveType = this.getAttribute('data-id-save-type')
+			var childId = document.getElementById(id).getAttribute('data-child-id')
+			// console.log(childId)
+			var container = document.getElementById(childId)
+			// console.log(container)
+			var updateNeeded = container.getAttribute('data-id-update')
+			// console.log(updateNeeded)
+
+			if (updateNeeded === 'true') {
+				if (saveType === 'config') {
+					actionTarget = '/saved_config'
+					loadActionTarget = "/load_config"
+					displayTarget = "saved-config-display"
+				}
+				else {
+					actionTarget = '/saved_data'
+					loadActionTarget = "/load_data"
+					displayTarget = "saved-data-display"
+				}
+				fetch(actionTarget, {
+					method: 'GET'
+				})
+				.then(response => response.json())
+				.then(data => {
+					var configFiles = data.config_files
+					console.log(configFiles)
+					for (var configFile of configFiles) {
+						var buttonElement = document.createElement("button")
+						buttonElement.type = "button"
+						buttonElement.innerText = configFile
+						console.log(configFile)
+						buttonElement.onclick = function() {
+							console.log(this.innerText)
+							newActionTarget = loadActionTarget + '/' + this.innerText
+							console.log(newActionTarget)
+							fetch(newActionTarget, {
+								method: 'GET'
+							})
+							.then(response => response.json())
+							.then(data => {
+								var configData = data.config_json
+								document.getElementById(displayTarget).innerHTML = "<p>" + JSON.stringify(configData) + "</p>"
+								// console.log(configData)
+							})
+							.catch(error => {console.log("error", error)})
+						}
+						// console.log(buttonElement)
+						container.appendChild(buttonElement)
+						// container.appendChild("br")
+					};
+					container.setAttribute('data-id-update', 'false')
+					// console.log(container)
+				})
+				.catch(error => {console.log("error", error)})
+			}
+		});
+	};
+</script>
+<script>
 	var form = document.getElementsByClassName('save-form')
 
 	for (var i = 0; i < form.length; i++) {
@@ -55,7 +119,8 @@
 			.then(response => response.json())
 			.then(data => {
 				// Hide the form
-				var statusCode = data.status_code
+				// console.log(response)
+				console.log(data)
 
 				var messageId = data.message_id
 
@@ -66,11 +131,16 @@
 
 				document.getElementById(messageId).style.display = 'block'
 
-				if (statusCode === 200) {
-					this.querySelectorAll('input, textarea').forEach(function(field) {
-						field.value = ''; // Set the value to an empty string
-					});
+				console.log(messageId)
+
+				if (messageId === 'save-config-message' & message === 'Successfully saved configuration') {
+					var savedConfig = document.getElementById('saved-config')
+					savedConfig.setAttribute("data-id-update","true")
+					console.log(savedConfig)
 				}
+				this.querySelectorAll('input, textarea').forEach(function(field) {
+					field.value = ''; // Set the value to an empty string
+				});
 				
 			})
 			.catch(error => console.error('error:', error));
@@ -94,14 +164,10 @@
 	function closeDialog(dialogId) {
 		var dialogBox = document.getElementById(dialogId);
 
-		var messageElements = document.querySelectorAll('save-message')
+		var messageElement = document.getElementById('save-config-message')
 		// console.log(messageElements)
 
-		for (var messageElement of messageElements) {
-			// console.log(messageElement)
-			messageElement.innerText = ""
-			// console.log(messageElement) 
-		}
+		messageElement.innerText = ""
 
 		var saveForms = document.getElementsByClassName('save-form')
 		// console.log(saveForms)

@@ -158,12 +158,12 @@ def save_config():
     if not config_name:
         error = "Configuration name is required"
     else:
-        config_file = config_name + ".json"
+        config_file_name = config_name + ".json"
 
     if not error:
-        folder_name = str(user_id)
+        user_folder_name = str(user_id)
 
-        folder_path = os.path.join(os.getcwd(), "user_data",folder_name)
+        folder_path = os.path.join(os.getcwd(), "user_data", user_folder_name, 'config')
 
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
@@ -173,13 +173,14 @@ def save_config():
 
         file_names = os.listdir(folder_path)
 
-        if config_file in file_names:
+        if config_file_name in file_names:
             error = "A configuration already exists with this name"
             status_code = 500
         else:
+            file_path = os.path.join(folder_path, config_file_name)
             try:
                 config_json = bp.cache.get("config")
-                with open(f"user_data/{folder_name}/{config_file}", "w", encoding="utf-8") as file:
+                with open(file_path, "w", encoding="utf-8") as file:
                     json.dump(config_json, file)
                 error = "Successfully saved configuration"
                 status_code = 200
@@ -187,12 +188,58 @@ def save_config():
                 error = str(e)
                 status_code = 500
 
-    response_data = {"message":error, "message_id":"save-message"}
+    # print(status_code)
+    response_data = {"message":error, "message_id":"save-config-message"}
 
     response =  jsonify(response_data)
 
     response.status_code = status_code
 
+    # print(response)
+
+    return response
+
+@bp.route("/saved_config", methods = ["GET"])
+@login_required
+def saved_config():
+
+    user_id = g.user["id"]
+
+    user_folder_name = str(user_id)
+
+    folder_path = os.path.join(os.getcwd(), "user_data", user_folder_name, 'config')
+
+    if not os.path.exists(folder_path):
+        config_files = []
+    else:
+        config_files = os.listdir(folder_path)
+
+    response = jsonify({"config_files":config_files})
+
+    response.status_code = 200
+
+    return response
+
+@bp.route("/load_config/<config_file>", methods = ["GET"])
+@login_required
+def load_config(config_file):
+
+    user_id = g.user["id"]
+
+    user_folder_name = str(user_id)
+
+    folder_path = os.path.join(os.getcwd(), "user_data", user_folder_name, 'config')
+
+    file_path = os.path.join(folder_path, config_file)
+
+    with open(file_path, "r", encoding="utf-8") as file:
+        config_json = json.load(file)
+
+    response = jsonify({"config_json":config_json})
+
+    response.status_code = 200
+
+    print(response)
     return response
 
 @bp.route("/about")

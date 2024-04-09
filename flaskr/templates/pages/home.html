@@ -91,6 +91,7 @@
                                 <div class="container" style="padding: 10px;">
                                     <button type="button" data-id="iterative_data_miner" data-id-button-group="group2" class="element collapsible" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Iterative Miner</b></button>
                                     <button type="button" data-id="procedural_data_miner" data-id-button-group="group2" class="element collapsible" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Procedural Miner</b></button>
+                                    <button type="button" data-id="existing_data_miner" data-id-save-type="config" data-id-button-group="group2" class="element collapsible saved-info" style="border-radius: 10px; text-align: center; padding: 2px;"><b>Saved Miner</b></button>
                                 </div>
                                 <div style="padding: 10px;">
                                     <div id="iterative_data_miner" data-id-set="miner" class="content content-set">
@@ -142,6 +143,13 @@
                                             <button type="submit"><b>Submit</b></button>
                                         </form>
                                     </div>
+                                    <div id="existing_data_miner" data-child-id ="saved-config" data-id-set="miner" class="content content-set">
+                                        <h3 style="border: 1px solid #000;">Saved Configurations</h3>
+                                        <div id="saved-config" data-id-update="true" class="scrollable-content left-container" style="height: 200px; width: 120px;">
+                                        </div>
+                                        <div id="saved-config-display" style="margin-left: 200px; overflow-wrap: break-word; word-wrap: break-word; height: 220px; padding: 10px; border: 1px solid #000;">
+                                        </div>
+                                    </div>
                                 </div>
                                 <br>
                             </div>
@@ -161,7 +169,7 @@
                                     <button type="button" onclick="closeDialog('save-config')" class="close-button">Close</button>
                                     <h2>Save Configuration</h2>
                                     <div class="message-container">
-                                        <p id="save-message" style="color: red; display: none;">
+                                        <p id="save-config-message" style="color: red; display: none;">
                                             Message Test
                                         </p>
                                     </div>
