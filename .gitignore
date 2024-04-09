@@ -1,0 +1,13 @@
+*.log
+/_pycache_
+*.pyc
+.env
+/Lib
+/Scripts
+/venv
+*.cfg
+/Include
+*.pyi
+.venv
+*.pem
+*.json
