@@ -81,6 +81,7 @@
 							.then(data => {
 								var configData = data.config_json
 								document.getElementById(displayTarget).innerHTML = "<p>" + JSON.stringify(configData) + "</p>"
+								document.getElementById("run-saved-config").style.display = "block"
 								// console.log(configData)
 							})
 							.catch(error => {console.log("error", error)})
