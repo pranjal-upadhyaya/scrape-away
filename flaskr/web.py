@@ -29,7 +29,6 @@ def default_page():
 def home(new_request = True):
     if new_request:
         if request.method == "POST":
-            # print("first")
             data = request.form
             website = data["website"]
             miner = DataMiner(website)
@@ -52,15 +51,15 @@ def home(new_request = True):
                 bp.cache.set("raw_source_json", None, timeout = 3600)
             return render_template("pages/home.html", raw_source_json = raw_source_json, website = website, header_list = None, mined_data = None)
         else:
-            # print("third")
             return render_template("pages/home.html", raw_source_json = None, website = None, header_list = None, mined_data = None)
     else:
-        # print("second")
         website = bp.cache.get("website")
         raw_source_json = bp.cache.get("raw_source_json")
         header_list = bp.cache.get("header_list")
+        if not bp.cache.get("mined_data"):
+            return render_template("pages/home.html", raw_source_json = None, website = None, header_list = None, mined_data = None)
         mined_data = json.loads(bp.cache.get("mined_data"))
-        return render_template("pages/home.html", raw_source_json = raw_source_json, website = website, header_list = header_list, mined_data = mined_data)    
+        return render_template("pages/home.html", raw_source_json = raw_source_json, website = website, header_list = header_list, mined_data = mined_data)   
 
 @bp.route("/iterative_data_miner", methods = ("GET", "POST"))
 @login_required
@@ -81,7 +80,7 @@ def iterative_data_miner():
         # Saving the mining configuration
         config = {"config_type":"iterative"}
         config["key"] = master_key
-        config["tag"] = master_key
+        config["tag"] = master_tag
         config["attribute"] = master_attribute
         config["key[]"] = keys
         config["tag[]"] = tags
@@ -89,9 +88,9 @@ def iterative_data_miner():
 
         bp.cache.set("config", config, timeout = 3600)
 
-        element_list = DataMiner.find_elements(soup, master_tag, json.loads(master_attribute))
-
         bp.cache.set("header_list", keys, timeout = 3600)
+
+        element_list = DataMiner.find_elements(soup, master_tag, json.loads(master_attribute))
 
         if element_list:
             count = 0
@@ -100,13 +99,26 @@ def iterative_data_miner():
                 for i in range(len(keys)):
                     tag = tags[i] if tags[i] else None
                     attribute = json.loads(attributes[i]) if attributes[i] else {}
+
                     if tag or attribute:
                         reqd_element = DataMiner.find_element(element, tag, attribute)
                     else:
                         reqd_element = element
-                    element_data[keys[i]] = {"text": DataMiner.extract_text(reqd_element), "url": DataMiner.extract_link(reqd_element)}
+
+                    if reqd_element:
+                        text = DataMiner.extract_text(reqd_element)
+                        url = DataMiner.extract_link(reqd_element)
+                    else:
+                        text = None
+                        url = None
+                    element_data[keys[i]] = {"text": text, "url": url}
                 data[count] = element_data
                 count += 1
+        else:
+            element_data = {}
+            for i in range(len(keys)):
+                element_data[keys[i]] = {"text": None, "url": None}
+            data[0] = element_data
 
         bp.cache.set("mined_data", json.dumps(data), timeout = 3600)
 
@@ -138,15 +150,119 @@ def procedural_data_miner():
             attribute = json.loads(attributes[i]) if attributes[i] else {}
             if tag or attribute:
                 reqd_element = DataMiner.find_element(soup, tag, attribute)
-                element_data[keys[i]] = {"text": DataMiner.extract_text(reqd_element), "url": DataMiner.extract_link(reqd_element)}
+                if reqd_element:
+                    text = DataMiner.extract_text(reqd_element)
+                    url = DataMiner.extract_link(reqd_element)
+                else:
+                    text = None
+                    url = None
+                element_data[keys[i]] = {"text": text, "url": url}
             else:
                 reqd_element = None
                 element_data[keys[i]] = {"text": None, "url": None}
-        data["0"] = element_data
+        data[0] = element_data
 
         bp.cache.set("mined_data", json.dumps(data), timeout = 3600)
 
         return redirect(url_for("webpage.home", new_request = False))
+    
+@bp.route("/saved_data_miner", methods = ["POST"])
+@login_required
+def saved_data_miner():
+    config = request.json
+    soup = bp.cache.get("soup")
+    if not soup:
+        return redirect(url_for("webpage.home"))
+    if config["config_type"] == "iterative":
+        data = {}
+        master_key = config["key"]
+        master_tag = config["tag"]
+        master_attribute = config["attribute"]
+        keys = config["key[]"]
+        tags = config["tag[]"]
+        attributes = config["attribute[]"]
+
+        bp.cache.set("config", config, timeout = 3600)
+
+        bp.cache.set("header_list", keys, timeout = 3600)
+
+        element_list = DataMiner.find_elements(soup, master_tag, json.loads(master_attribute))
+
+        if element_list:
+            count = 0
+            for element in element_list:
+                element_data = {}
+                for i in range(len(keys)):
+                    tag = tags[i] if tags[i] else None
+                    attribute = json.loads(attributes[i]) if attributes[i] else {}
+
+                    if tag or attribute:
+                        reqd_element = DataMiner.find_element(element, tag, attribute)
+                    else:
+                        reqd_element = element
+
+                    if reqd_element:
+                        text = DataMiner.extract_text(reqd_element)
+                        url = DataMiner.extract_link(reqd_element)
+                    else:
+                        text = None
+                        url = None
+                    element_data[keys[i]] = {"text": text, "url": url}
+                data[count] = element_data
+                count += 1
+        else:
+            element_data = {}
+            for i in range(len(keys)):
+                element_data[keys[i]] = {"text": None, "url": None}
+            data[0] = element_data
+
+        mined_data = json.dumps(data)
+
+        bp.cache.set("mined_data", mined_data, timeout = 3600)
+
+        response = jsonify({"redirection_path": url_for("webpage.home", new_request = False)})
+
+        response.status_code = 200
+
+        return response
+    else:
+        data = {}
+
+        keys = config["key[]"]
+        tags = config["tag[]"]
+        attributes = config["attribute[]"]
+
+        bp.cache.set("config", config, timeout = 3600)
+
+        bp.cache.set("header_list", keys, timeout = 3600)
+
+        element_data = {}
+        for i in range(len(keys)):
+            tag = tags[i] if tags[i] else None
+            attribute = json.loads(attributes[i]) if attributes[i] else {}
+            if tag or attribute:
+                reqd_element = DataMiner.find_element(soup, tag, attribute)
+                if reqd_element:
+                    text = DataMiner.extract_text(reqd_element)
+                    url = DataMiner.extract_link(reqd_element)
+                else:
+                    text = None
+                    url = None
+                element_data[keys[i]] = {"text": text, "url": url}
+            else:
+                reqd_element = None
+                element_data[keys[i]] = {"text": None, "url": None}
+        data[0] = element_data
+
+        mined_data = json.dumps(data)
+
+        bp.cache.set("mined_data", mined_data, timeout = 3600)
+
+        response = jsonify({"redirection_path": url_for("webpage.home", new_request = False)})
+
+        response.status_code = 200
+
+        return response
 
 @bp.route("/save_config", methods = ["POST"])
 @login_required
@@ -188,14 +304,11 @@ def save_config():
                 error = str(e)
                 status_code = 500
 
-    # print(status_code)
     response_data = {"message":error, "message_id":"save-config-message"}
 
     response =  jsonify(response_data)
 
     response.status_code = status_code
-
-    # print(response)
 
     return response
 
@@ -239,7 +352,7 @@ def load_config(config_file):
 
     response.status_code = 200
 
-    print(response)
+    # print(response)
     return response
 
 @bp.route("/about")

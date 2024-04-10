@@ -64,16 +64,13 @@
 				.then(response => response.json())
 				.then(data => {
 					var configFiles = data.config_files
-					console.log(configFiles)
 					for (var configFile of configFiles) {
 						var buttonElement = document.createElement("button")
 						buttonElement.type = "button"
 						buttonElement.innerText = configFile
 						console.log(configFile)
 						buttonElement.onclick = function() {
-							console.log(this.innerText)
 							newActionTarget = loadActionTarget + '/' + this.innerText
-							console.log(newActionTarget)
 							fetch(newActionTarget, {
 								method: 'GET'
 							})
@@ -97,6 +94,34 @@
 			}
 		});
 	};
+</script>
+<script>
+	document.getElementById("run-saved-config").addEventListener("click", function() {
+		var config = document.getElementById("saved-config-display").innerText;
+		console.log(config)
+		// var config = configElement.innerText;
+		// console.log(config)
+
+		fetch('/saved_data_miner', {
+			method: 'POST',
+			headers: {
+                    'Content-Type': 'application/json'
+                },
+            body: config
+		})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data)
+			var path = data.redirection_path
+			// Construct the full URL by prepending protocol and domain
+			const fullUrl = window.location.origin + path; // window.location.origin returns the protocol and domain
+			// Redirect to the dynamically generated URL
+			window.location.href = fullUrl;
+    	})
+		.catch(error => {
+			console.error('Error:', error);
+		});
+	})
 </script>
 <script>
 	var form = document.getElementsByClassName('save-form')
