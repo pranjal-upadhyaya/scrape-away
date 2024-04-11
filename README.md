@@ -27,6 +27,7 @@ The web application provides a low code web scraping utility. The user can enter
 - Add the feature to allow users to feed a csv of urls and specify a saved mining configuration. The backend process will then mine data from the page source of each url in the csv and save the mined data for future retrieval.
 - Add a credit system that binds the number of data rows that can be downloaded to the number of credits available in a users account.
 - Add OTP authentication to the registration process.
+- Containarize the entire framework using Docker.
 
 ## Installation
 
