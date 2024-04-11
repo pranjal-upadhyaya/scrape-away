@@ -1,7 +1,7 @@
 # Scrape Away
 
 ## Description
-The web application provides a low code web scraping utility. The user can enter the url and once the page source is scraped use the data mining functionality provided to mine data from the page source.The web application is created using flask while the scraper hidden within is based on the requests libary. The data mining functionality is implimeneted using BeautifulSoup.
+The web application provides a low code web scraping utility. The user can enter the url and once the page source is scraped use the data mining functionality provided to mine data from the page source.The web application is created using flask while the scraper hidden within is based on the requests libary. The data mining functionality is implimented using BeautifulSoup.
 
 ## Table Of Contents
 
