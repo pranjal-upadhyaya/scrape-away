@@ -1,13 +1,32 @@
 # Scrape Away
 
 ## Description
-The web application provides a low code web scraping utility. The web application is created using flask while the scraper hidden within is based on the requests libary.
+The web application provides a low code web scraping utility. The user can enter the url and once the page source is scraped use the data mining functionality provided to mine data from the page source.The web application is created using flask while the scraper hidden within is based on the requests libary. The data mining functionality is implimeneted using BeautifulSoup.
 
 ## Table Of Contents
+
+-[Achievements](#Achievements)
+
+-[Future Goals](#Goals)
 
 -[Installation](#Installation)
 
 -[Usage](#Usage)
+
+## Achievements
+
+- A basic authentication system has been implemented that allows the user to register, login and logout from the web framework.
+- The web scraping and data mining functionalities are made available only to users who are logged in. 
+- A web framework has been provided where the user can enter a url and scrape its webpage.
+- Once the webpage is successfully scraped, the framework provides the user with the capability to mine data from the scraped page source.
+- The configuration used can be saved and recalled later to mine page sources.
+
+## Goals
+
+- Add the feature to store and downnload scraped data.
+- Add the feature to allow users to feed a csv of urls and specify a saved mining configuration. The backend process will then mine data from the page source of each url in the csv and save the mined data for future retrieval.
+- Add a credit system that binds the number of data rows that can be downloaded to the number of credits available in a users account.
+- Add OTP authentication to the registration process.
 
 ## Installation
 
